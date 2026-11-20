@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="50%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#facc15"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Latar Bulat Halus -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  
+  <!-- Lingkaran Luar Ringan -->
+  <circle cx="256" cy="256" r="216" fill="none" stroke="#fed7aa" stroke-width="6" opacity="0.35"/>
+
+  <!-- Ikon Tudung Saji (Cloche) Berkecepatan Antar (DashDish) -->
+  <g filter="url(#shadow)" transform="translate(0, -10)">
+    <!-- Asap Harum / Garis Kecepatan -->
+    <path d="M 210 120 Q 200 90 220 70" fill="none" stroke="#fef08a" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 256 115 Q 266 85 246 65" fill="none" stroke="#fef08a" stroke-width="9" stroke-linecap="round"/>
+    <path d="M 302 120 Q 312 90 292 70" fill="none" stroke="#fef08a" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Pegangan Tudung Saji Emas -->
+    <circle cx="256" cy="148" r="22" fill="url(#goldGrad)" stroke="#ffffff" stroke-width="4"/>
+
+    <!-- Kubah Tudung Saji Putih Bersih -->
+    <path d="M 100 290 C 100 175 170 160 256 160 C 342 160 412 175 412 290 Z" fill="#ffffff"/>
+
+    <!-- Piring Saji / Plat Bawah Metalik -->
+    <rect x="74" y="290" width="364" height="26" rx="13" fill="#f8fafc" stroke="#cbd5e1" stroke-width="4"/>
+    <rect x="94" y="316" width="324" height="12" rx="6" fill="#e2e8f0"/>
+
+    <!-- Motor Kurir / Roda Kecepatan di Bawah Piring -->
+    <!-- Roda Kiri -->
+    <circle cx="160" cy="380" r="42" fill="#1e293b" stroke="#ffffff" stroke-width="6"/>
+    <circle cx="160" cy="380" r="18" fill="url(#goldGrad)"/>
+    
+    <!-- Roda Kanan -->
+    <circle cx="352" cy="380" r="42" fill="#1e293b" stroke="#ffffff" stroke-width="6"/>
+    <circle cx="352" cy="380" r="18" fill="url(#goldGrad)"/>
+
+    <!-- Rangka Penghubung & Garis Kecepatan Meluncur -->
+    <path d="M 160 380 L 256 360 L 352 380" fill="none" stroke="#ffffff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Garis Cepat (Dash) -->
+    <line x1="45" y1="210" x2="85" y2="210" stroke="#fef08a" stroke-width="10" stroke-linecap="round"/>
+    <line x1="30" y1="250" x2="80" y2="250" stroke="#fef08a" stroke-width="10" stroke-linecap="round"/>
+    <line x1="50" y1="290" x2="75" y2="290" stroke="#fef08a" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>

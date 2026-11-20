@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DashDish — Pesan Antar Kedai Mandiri</title>
+  <meta name="description" content="Pesan antar makanan & minuman langsung dari kedai dengan kurir internal tanpa komisi pihak ketiga.">
+  <meta name="theme-color" content="#ea580c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="ikon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="ikon.svg">
+  <link rel="stylesheet" href="style.css?v=2026112101">
+</head>
+<body>
+
+  <!-- Kontainer Aplikasi -->
+  <div class="wadah-app">
+
+    <!-- Header Atas: Brand & Role Switcher -->
+    <header class="header-utama">
+      <div class="wadah-header-isi">
+        
+        <div class="brand-baris">
+          <img src="ikon.svg" alt="DashDish" width="40" height="40" class="logo-app">
+          <div class="brand-teks">
+            <span class="nama-kedai" id="headerNamaKedai">Kedai DashDish Rasa Nusantara</span>
+            <span class="status-buka"><span class="titik-hijau"></span> Kedai Buka • Kurir Siap Meluncur</span>
+          </div>
+        </div>
+
+        <!-- Tombol Ganti Peran (Pelanggan / Dapur / Kurir / Kelola) -->
+        <nav class="peran-switcher">
+          <button type="button" class="btn-peran aktif" data-target="layar-pelanggan">
+            <span>🛍️ Pesan Menu</span>
+          </button>
+          <button type="button" class="btn-peran" data-target="layar-dapur">
+            <span>🍳 Dapur Kedai</span>
+            <span class="badge-notif" id="badgeAntreanDapur" hidden>0</span>
+          </button>
+          <button type="button" class="btn-peran" data-target="layar-kurir">
+            <span>🛵 Sudut Kurir</span>
+            <span class="badge-notif" id="badgeAntreanKurir" hidden>0</span>
+          </button>
+          <button type="button" class="btn-peran" data-target="layar-kelola">
+            <span>⚙️ Menu & Ongkir</span>
+          </button>
+        </nav>
+
+        <!-- Tombol Keranjang Belanja -->
+        <div class="aksi-keranjang-atas">
+          <button type="button" class="btn-keranjang" id="btnBukaKeranjang">
+            <span class="ikon-tas">🛒</span>
+            <span class="keranjang-teks">Keranjang</span>
+            <span class="jumlah-item-badge" id="badgeTotalItem">0</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Konten Halaman -->
+    <main class="konten-area">
+
+      <!-- ============================================== -->
+      <!-- LAYAR 1: SUDUT PELANGGAN (KATALOG & PESAN ANTAR) -->
+      <!-- ============================================== -->
+      <section id="layar-pelanggan" class="layar-peran aktif">
+        
+        <!-- Banner Promo & Info Pengantaran Kedai -->
+        <div class="banner-kedai">
+          <div class="banner-konten">
+            <h2>Pesan Antar Langsung dari Kedai! 🛵💨</h2>
+            <p id="bannerInfoOngkir">Ongkir bersahabat kurir internal: Rp2.000/km (Radius s/d 10 km). Makanan dijamin hangat & porsi penuh!</p>
+            <div class="tag-garansi">
+              <span>✓ Tanpa Tambahan Biaya Aplikasi</span>
+              <span>✓ Bisa Bayar COD di Rumah</span>
+              <span>✓ Kurir Ramah Langsung dari Kedai</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pencarian & Kategori Menu -->
+        <div class="baris-filter-menu">
+          <div class="wadah-cari-menu">
+            <input type="text" id="cariMenuInput" placeholder="Cari makanan lezat atau minuman segar...">
+          </div>
+          <div class="kategori-pills" id="wadahKategoriPills">
+            <button type="button" class="pill-kategori aktif" data-kategori="semua">Semua Menu</button>
+            <button type="button" class="pill-kategori" data-kategori="utama">Makanan Utama</button>
+            <button type="button" class="pill-kategori" data-kategori="snack">Camilan & Snack</button>
+            <button type="button" class="pill-kategori" data-kategori="minuman">Minuman Segar</button>
+            <button type="button" class="pill-kategori" data-kategori="paket">Paket Hemat</button>
+          </div>
+        </div>
+
+        <!-- Grid Kartu Menu Makanan -->
+        <div class="grid-menu-makanan" id="wadahGridMenu">
+          <!-- Diisi via JS -->
+        </div>
+
+        <!-- Pelacakan Pesanan Aktif Pelanggan -->
+        <div class="wadah-status-pesanan-aktif" id="wadahPesananAktifPelanggan" hidden>
+          <div class="kartu-tracking">
+            <div class="tracking-kepala">
+              <div>
+                <h3>Status Pesanan Anda (#<span id="trackNoPesanan">DSH-001</span>)</h3>
+                <small id="trackDetailPesanan">2 Menu • Dikirim ke Alamat Pemesan</small>
+              </div>
+              <span class="badge-status-tahap" id="trackBadgeTahap">Dimasak di Dapur 🍳</span>
+            </div>
+
+            <!-- Garis Progres 4 Tahap -->
+            <div class="timeline-progres">
+              <div class="tahap-item selesai" id="stepKonfirmasi">
+                <div class="titik-tahap">✓</div>
+                <span>Diterima Kedai</span>
+              </div>
+              <div class="garis-hubung aktif" id="line1"></div>
+              <div class="tahap-item aktif" id="stepMasak">
+                <div class="titik-tahap">🍳</div>
+                <span>Dimasak</span>
+              </div>
+              <div class="garis-hubung" id="line2"></div>
+              <div class="tahap-item" id="stepAntar">
+                <div class="titik-tahap">🛵</div>
+                <span>Diantar Kurir</span>
+              </div>
+              <div class="garis-hubung" id="line3"></div>
+              <div class="tahap-item" id="stepSelesai">
+                <div class="titik-tahap">🎉</div>
+                <span>Sampai</span>
+              </div>
+            </div>
+
+            <div class="tracking-footer">
+              <span id="trackEstimasiWaktu">Estimasi siap & diantar: ~20-30 menit</span>
+              <a href="#" id="trackBtnHubungiKedai" target="_blank" class="btn-wa-kecil">Chat Kedai via WA</a>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============================================== -->
+      <!-- LAYAR 2: SUDUT DAPUR & KASIR KEDAI (ORDERS BOARD) -->
+      <!-- ============================================== -->
+      <section id="layar-dapur" class="layar-peran">
+        <div class="header-layar-internal">
+          <div>
+            <h2>Papan Antrean Pesanan Dapur</h2>
+            <p>Kelola pesanan masuk, konfirmasi masak, dan serahkan ke kurir pengantar.</p>
+          </div>
+          <div class="baris-filter-internal">
+            <span class="badge-hitung" id="dapurTotalPesananAktif">0 Pesanan Aktif</span>
+          </div>
+        </div>
+
+        <div class="papan-antrean-grid">
+          
+          <!-- Kolom 1: Pesanan Baru Masuk -->
+          <div class="kolom-antrean antrean-baru">
+            <div class="kepala-kolom">
+              <h3>1. Pesanan Baru Masuk</h3>
+              <span class="penghitung-kolom" id="countBaru">0</span>
+            </div>
+            <div class="daftar-kartu-order" id="kolomOrderBaru">
+              <!-- Diisi JS -->
+            </div>
+          </div>
+
+          <!-- Kolom 2: Sedang Dimasak -->
+          <div class="kolom-antrean antrean-masak">
+            <div class="kepala-kolom">
+              <h3>2. Sedang Dimasak</h3>
+              <span class="penghitung-kolom" id="countMasak">0</span>
+            </div>
+            <div class="daftar-kartu-order" id="kolomOrderMasak">
+              <!-- Diisi JS -->
+            </div>
+          </div>
+
+          <!-- Kolom 3: Siap Diantar Kurir -->
+          <div class="kolom-antrean antrean-antar">
+            <div class="kepala-kolom">
+              <h3>3. Siap Diantar Kurir</h3>
+              <span class="penghitung-kolom" id="countAntar">0</span>
+            </div>
+            <div class="daftar-kartu-order" id="kolomOrderAntar">
+              <!-- Diisi JS -->
+            </div>
+          </div>
+
+          <!-- Kolom 4: Selesai / Terkirim -->
+          <div class="kolom-antrean antrean-selesai">
+            <div class="kepala-kolom">
+              <h3>4. Selesai Hari Ini</h3>
+              <span class="penghitung-kolom" id="countSelesai">0</span>
+            </div>
+            <div class="daftar-kartu-order" id="kolomOrderSelesai">
+              <!-- Diisi JS -->
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- LAYAR 3: SUDUT KURIR KEDAI (DRIVER APP) -->
+      <!-- ============================================== -->
+      <section id="layar-kurir" class="layar-peran">
+        <div class="header-layar-internal">
+          <div>
+            <h2>Dashboard Kurir Internal Kedai</h2>
+            <p>Daftar pesanan siap antar ke rumah pelanggan, rute jalan, dan tagihan COD.</p>
+          </div>
+          <div class="status-kurir-badge">
+            🛵 Kurir: <b>Pak Slamet (Kurir Kedai)</b>
+          </div>
+        </div>
+
+        <div class="wadah-tugas-kurir" id="wadahTugasKurir">
+          <!-- Diisi JS -->
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- LAYAR 4: KELOLA MENU & PENGATURAN ONGKIR KEDAI -->
+      <!-- ============================================== -->
+      <section id="layar-kelola" class="layar-peran">
+        <div class="header-layar-internal">
+          <div>
+            <h2>Kelola Menu & Pengaturan Pesan Antar</h2>
+            <p>Atur daftar makanan, harga, ongkos kirim kedai, dan data cadangan.</p>
+          </div>
+          <button type="button" class="btn-utama" id="btnTambahMenu">+ Tambah Menu Makanan</button>
+        </div>
+
+        <div class="grid-pengaturan-kedai">
+          
+          <!-- Tabel Manajemen Menu -->
+          <div class="kartu-kelola kolom-penuh">
+            <h3>Daftar Menu & Stok Makanan</h3>
+            <div class="tabel-gulir">
+              <table class="tabel-data">
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nama Menu</th>
+                    <th>Kategori</th>
+                    <th>Harga</th>
+                    <th>Status Stok</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyKelolaMenu">
+                  <!-- Diisi JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Pengaturan Kedai & Tarif Ongkir Kurir -->
+          <div class="kartu-kelola">
+            <h3>Pengaturan Kedai & Tarif Ongkir</h3>
+            <form id="formSettingKedai">
+              <div class="bidang-form">
+                <label for="setNamaKedai">Nama Kedai / Usaha *</label>
+                <input type="text" id="setNamaKedai" value="Kedai DashDish Rasa Nusantara" required>
+              </div>
+              <div class="bidang-form">
+                <label for="setAlamatKedai">Alamat Kedai (Titik Berangkat Kurir) *</label>
+                <input type="text" id="setAlamatKedai" value="Jl. Kuliner Lezat No. 12, Sleman, Yogyakarta" required>
+              </div>
+              <div class="baris-ganda">
+                <div class="bidang-form">
+                  <label for="setWaKedai">No. WhatsApp Admin Kedai *</label>
+                  <input type="text" id="setWaKedai" value="081234567890" required>
+                </div>
+                <div class="bidang-form">
+                  <label for="setRekeningKedai">Rekening / QRIS Pembayaran</label>
+                  <input type="text" id="setRekeningKedai" value="BCA 8820192819 a.n. DashDish">
+                </div>
+              </div>
+              <div class="baris-ganda">
+                <div class="bidang-form">
+                  <label for="setOngkirDasar">Tarif Ongkir Dasar (Rp)</label>
+                  <input type="number" id="setOngkirDasar" value="5000" step="1000" min="0" required>
+                  <small class="bantu">Tarif untuk 1-2 km pertama</small>
+                </div>
+                <div class="bidang-form">
+                  <label for="setOngkirPerKm">Tarif Tambahan per Km (Rp)</label>
+                  <input type="number" id="setOngkirPerKm" value="2000" step="500" min="0" required>
+                  <small class="bantu">Biaya tambahan tiap kilometer</small>
+                </div>
+              </div>
+              <button type="submit" class="btn-utama">Simpan Pengaturan Kedai</button>
+            </form>
+          </div>
+
+          <!-- Backup & Ekspor Data -->
+          <div class="kartu-kelola">
+            <h3>Cadangan & Laporan Penjualan</h3>
+            <p class="redup-kecil">Data tersimpan di browser lokal perangkat kedai Anda.</p>
+            <div class="baris-tombol-backup">
+              <button type="button" class="btn-sekunder" id="btnUnduhBackupJson">💾 Unduh Backup Data (JSON)</button>
+              <label class="btn-sekunder tombol-file">
+                📂 Pulihkan Data dari JSON
+                <input type="file" id="inputPulihkanJson" accept=".json" hidden>
+              </label>
+              <button type="button" class="btn-sekunder" id="btnEksporPesananCsv">📑 Ekspor Riwayat Pesanan (CSV)</button>
+            </div>
+            <div class="kotak-reset">
+              <h4>Reset ke Menu Bawaan</h4>
+              <p>Kembalikan menu makanan ke contoh default lezat.</p>
+              <button type="button" class="btn-sekunder btn-danger" id="btnResetDemo">🔄 Reset ke Data Demo</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 1: KERANJANG BELANJA & CHECKOUT ONGKIR -->
+  <!-- ============================================== -->
+  <div id="modalKeranjang" class="modal-latar" hidden>
+    <div class="modal-kotak modal-lebar">
+      <div class="modal-kepala">
+        <h3>Keranjang Pesanan Anda</h3>
+        <button type="button" class="btn-tutup-modal" id="btnTutupKeranjang">✕</button>
+      </div>
+
+      <div class="modal-badan tata-keranjang-split">
+        
+        <!-- Sisi Kiri: Daftar Menu di Keranjang -->
+        <div class="kolom-item-keranjang">
+          <h4>Menu yang Dipilih:</h4>
+          <div class="daftar-item-keranjang" id="wadahItemKeranjang">
+            <!-- Diisi JS -->
+          </div>
+          <div class="baris-subtotal">
+            <span>Subtotal Makanan:</span>
+            <b id="labelSubtotalMakanan">Rp0</b>
+          </div>
+        </div>
+
+        <!-- Sisi Kanan: Form Alamat & Hitung Ongkir -->
+        <div class="kolom-form-pengantaran">
+          <h4>Informasi Pengantaran:</h4>
+          <form id="formCheckoutAntar">
+            <div class="bidang-form">
+              <label for="checkNama">Nama Penerima *</label>
+              <input type="text" id="checkNama" required placeholder="Contoh: Bp. Doni / Mbak Putri">
+            </div>
+            <div class="bidang-form">
+              <label for="checkWa">Nomor WhatsApp *</label>
+              <input type="tel" id="checkWa" required placeholder="08xxxxxxxxxx">
+            </div>
+            <div class="bidang-form">
+              <label for="checkAlamat">Alamat Lengkap & Patokan Rumah *</label>
+              <textarea id="checkAlamat" rows="2" required placeholder="Jl. Melati No. 8, pagar hitam depan minimarket..."></textarea>
+            </div>
+
+            <div class="kotak-kalkulasi-ongkir">
+              <div class="baris-ganda">
+                <div class="bidang-form">
+                  <label for="checkJarak">Perkiraan Jarak (km) *</label>
+                  <input type="number" id="checkJarak" min="0.5" max="25" step="0.5" value="2.5" required>
+                </div>
+                <div class="bidang-form">
+                  <label for="checkOngkir">Ongkos Kirim Kurir (Rp)</label>
+                  <input type="number" id="checkOngkir" min="0" step="1000" value="8000" required>
+                  <small class="bantu">Bisa disesuaikan / ditawar santun</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="bidang-form">
+              <label for="checkMetodeBayar">Metode Pembayaran *</label>
+              <select id="checkMetodeBayar" required>
+                <option value="COD" selected>💵 COD (Bayar Tunai ke Kurir di Rumah)</option>
+                <option value="Transfer">💳 Transfer Bank (BCA / Mandiri / BRI)</option>
+                <option value="QRIS">📱 QRIS / GoPay / OVO / ShopeePay</option>
+              </select>
+            </div>
+
+            <div class="bidang-form">
+              <label for="checkCatatan">Catatan Tambahan untuk Dapur</label>
+              <input type="text" id="checkCatatan" placeholder="Contoh: Sambal dipisah, kuah banyak">
+            </div>
+
+            <!-- Ringkasan Total Tagihan -->
+            <div class="kotak-total-checkout">
+              <div class="baris-rincian">
+                <span>Total Makanan:</span>
+                <span id="ringkasMakanan">Rp0</span>
+              </div>
+              <div class="baris-rincian">
+                <span>Ongkos Kirim Kurir:</span>
+                <span id="ringkasOngkir">Rp0</span>
+              </div>
+              <div class="baris-rincian total-akhir">
+                <span>TOTAL PEMBAYARAN:</span>
+                <b id="ringkasTotalAkhir">Rp0</b>
+              </div>
+            </div>
+
+            <div class="modal-kaki-form">
+              <button type="submit" class="btn-utama btn-pesan-sekarang">
+                🚀 Kirim Pesanan ke Kedai (WhatsApp)
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 2: STRUK RESMI KEDAI & KURIR (PRINTABLE) -->
+  <!-- ============================================== -->
+  <div id="modalStrukPesanan" class="modal-latar" hidden>
+    <div class="modal-kotak modal-struk-wadah">
+      <div class="modal-kepala no-print">
+        <h3>Struk Pesanan Kedai</h3>
+        <button type="button" class="btn-tutup-modal" id="btnTutupModalStruk">✕</button>
+      </div>
+
+      <!-- KERTAS STRUK THERMAL 58/80MM -->
+      <div class="kertas-struk" id="kertasStruk">
+        <div class="struk-header">
+          <h3 id="strukNamaKedai">KEDAI DASHDISH</h3>
+          <p id="strukAlamatKedai">Jl. Kuliner Lezat No. 12, Sleman</p>
+          <p id="strukWaKedai">WA: 081234567890</p>
+          <div class="struk-garis">================================</div>
+          <h4 class="struk-judul">PESANAN ANTAR KURIR KEDAI</h4>
+          <p id="strukNomorNota">No: DSH-2026-001</p>
+          <p id="strukTglWaktu">21 Nov 2026, 14:30 WIB</p>
+        </div>
+
+        <div class="struk-garis">--------------------------------</div>
+
+        <div class="struk-info-pelanggan">
+          <div><span>Penerima :</span> <b id="strukNamaPelanggan">Bp. Doni</b></div>
+          <div><span>WhatsApp :</span> <span id="strukWaPelanggan">08123456789</span></div>
+          <div><span>Alamat   :</span> <span id="strukAlamatPelanggan">Jl. Melati No. 8</span></div>
+          <div><span>Jarak    :</span> <span id="strukJarakKm">2.5 km</span></div>
+        </div>
+
+        <div class="struk-garis">--------------------------------</div>
+
+        <div class="struk-rincian-menu" id="strukRincianMenu">
+          <!-- Diisi JS -->
+        </div>
+
+        <div class="struk-garis">--------------------------------</div>
+
+        <div class="struk-totalan">
+          <div class="struk-baris">
+            <span>Subtotal Menu:</span>
+            <span id="strukSubtotal">Rp0</span>
+          </div>
+          <div class="struk-baris">
+            <span>Ongkir Kurir Kedai:</span>
+            <span id="strukOngkir">Rp0</span>
+          </div>
+          <div class="struk-garis">================================</div>
+          <div class="struk-baris struk-grand-total">
+            <span>TOTAL TAGIHAN:</span>
+            <strong id="strukGrandTotal">Rp0</strong>
+          </div>
+          <div class="struk-baris">
+            <span>Metode Bayar:</span>
+            <b id="strukMetodeBayar">COD (Tunai)</b>
+          </div>
+          <div class="struk-catatan-box" id="strukCatatanWadah">
+            <span>Catatan: </span><i id="strukCatatanDapur">-</i>
+          </div>
+        </div>
+
+        <div class="struk-footer">
+          <p>Matur nuwun sanget sampun order!</p>
+          <p>Makanan diantar langsung oleh kurir kedai.</p>
+        </div>
+      </div>
+
+      <div class="modal-kaki no-print baris-aksi-struk">
+        <button type="button" class="btn-utama" id="btnCetakStrukThermal">🖨️ Cetak Struk (Printer Thermal / A4)</button>
+        <button type="button" class="btn-sekunder" id="btnTutupStrukKaki">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL 3: TAMBAH / EDIT MENU KEDAI -->
+  <!-- ============================================== -->
+  <div id="modalFormMenu" class="modal-latar" hidden>
+    <div class="modal-kotak">
+      <div class="modal-kepala">
+        <h3 id="judulModalMenu">Tambah Menu Makanan</h3>
+        <button type="button" class="btn-tutup-modal" id="btnTutupModalMenu">✕</button>
+      </div>
+      <form id="formMenuKedai" class="modal-badan">
+        <input type="hidden" id="formMenuId">
+        <div class="bidang-form">
+          <label for="formMenuNama">Nama Makanan / Minuman *</label>
+          <input type="text" id="formMenuNama" required placeholder="Contoh: Nasi Ayam Geprek Sambal Korek">
+        </div>
+        <div class="baris-ganda">
+          <div class="bidang-form">
+            <label for="formMenuKategori">Kategori *</label>
+            <select id="formMenuKategori" required>
+              <option value="utama">Makanan Utama</option>
+              <option value="snack">Camilan & Snack</option>
+              <option value="minuman">Minuman Segar</option>
+              <option value="paket">Paket Hemat</option>
+            </select>
+          </div>
+          <div class="bidang-form">
+            <label for="formMenuHarga">Harga (Rp) *</label>
+            <input type="number" id="formMenuHarga" required min="1000" step="500" placeholder="18000">
+          </div>
+        </div>
+        <div class="bidang-form">
+          <label for="formMenuEmoji">Ikon Emoji Makanan</label>
+          <input type="text" id="formMenuEmoji" placeholder="🍗, 🍚, 🍜, 🥤, 🥟, 🍟" value="🍲">
+        </div>
+        <div class="bidang-form">
+          <label for="formMenuDeskripsi">Deskripsi Lezat</label>
+          <textarea id="formMenuDeskripsi" rows="2" placeholder="Komposisi, rasa, sambal pilihan..."></textarea>
+        </div>
+        <div class="bidang-form">
+          <label for="formMenuStok">Status Ketersediaan</label>
+          <select id="formMenuStok">
+            <option value="tersedia">Tersedia (Siap Dipesan)</option>
+            <option value="habis">Habis (Sold Out)</option>
+          </select>
+        </div>
+        <div class="modal-kaki">
+          <button type="button" class="btn-sekunder" id="btnBatalMenu">Batal</button>
+          <button type="submit" class="btn-utama">Simpan Menu</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js?v=2026112101"></script>
+</body>
+</html>

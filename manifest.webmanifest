@@ -1,0 +1,17 @@
+{
+  "name": "DashDish — Pesan Antar Kedai Mandiri",
+  "short_name": "DashDish",
+  "description": "Aplikasi Pesan Antar Makanan & Minuman dengan Kurir Internal Kedai Mandiri Tanpa Potongan Komisi",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ea580c",
+  "theme_color": "#ea580c",
+  "icons": [
+    {
+      "src": "ikon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
